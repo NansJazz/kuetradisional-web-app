@@ -136,11 +136,40 @@ html, body, [class*="css"] {
         radial-gradient(circle at 50% 100%, rgba(181, 101, 29, 0.08), transparent 45%),
         var(--bg-base);
 }
+                        
+.main {
+    background: transparent !important;
+}
+
+section.main > div {
+    background: transparent !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: var(--bg-base) !important;
+}
+
+[data-testid="stMain"] {
+    background: transparent !important;
+}
+
+[data-testid="stMainBlockContainer"] {
+    background: transparent !important;
+}
 
 .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
     max-width: 1280px;
+    background: transparent !important;
+}
+
+div[data-testid="stHorizontalBlock"] {
+    background: transparent !important;
+}
+
+div[data-testid="stVerticalBlock"] {
+    background: transparent !important;
 }
 
 /* NAVIGASI */
@@ -564,11 +593,6 @@ div[data-testid="stFileUploader"] section {
 div[data-testid="stAlert"] p {
     color: var(--ink-soft) !important;
     font-weight: 600 !important;
-}
-
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: var(--bg-card) !important;
-    border-radius: 24px !important;
 }
 
 .stMarkdown, .stText, p, span, label {

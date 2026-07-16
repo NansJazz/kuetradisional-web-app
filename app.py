@@ -12,7 +12,6 @@ import base64
 # =========================
 st.set_page_config(
     page_title="Klasifikasi Kue Tradisional Indonesia",
-    page_icon="🍰",
     layout="wide"
 )
 
@@ -136,6 +135,21 @@ html, body, [class*="css"] {
         radial-gradient(circle at 96% 8%, rgba(63, 107, 74, 0.12), transparent 34%),
         radial-gradient(circle at 50% 100%, rgba(181, 101, 29, 0.08), transparent 45%),
         var(--bg-base);
+}
+
+/* Streamlit membungkus konten dalam beberapa container (main/appview-container)
+   yang secara default punya background putih sendiri dari tema bawaan. Ini yang
+   menyebabkan area tengah terlihat "terpotong" putih saat di-deploy. Ditimpa
+   transparan di sini agar gradient .stApp di atas selalu terlihat penuh. */
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stHeader"],
+.main {
+    background: transparent !important;
+}
+
+html, body {
+    background: var(--bg-base);
 }
 
 .block-container {
@@ -660,7 +674,7 @@ try:
     with open("class_names.json", "r") as f:
         class_names = json.load(f)
 except Exception as e:
-    st.error("File class_names.json gagal dibaca. Pastikan file tSersebut berada satu folder dengan app.py.")
+    st.error("File class_names.json gagal dibaca. Pastikan file tersebut berada satu folder dengan app.py.")
     st.stop()
 
 # =========================
@@ -672,42 +686,36 @@ kue_info = {
         "asal": "Jajanan tradisional Indonesia yang banyak dikenal di daerah Jawa.",
         "deskripsi": "Dadar gulung adalah kue tradisional berbentuk gulungan yang umumnya berwarna hijau dari daun pandan. Bagian dalamnya berisi parutan kelapa yang dimasak dengan gula merah sehingga memiliki rasa manis dan gurih.",
         "ciri": "Berbentuk gulungan, berwarna hijau, dan memiliki isian kelapa gula merah.",
-        "ikon": "🌯"
     },
     "kue_klepon": {
         "nama": "Kue Klepon",
         "asal": "Jajanan tradisional Jawa yang populer di berbagai daerah Indonesia.",
         "deskripsi": "Klepon adalah kue berbentuk bulat kecil yang terbuat dari tepung ketan. Bagian dalamnya berisi gula merah cair, sedangkan bagian luarnya dilapisi parutan kelapa.",
         "ciri": "Bulat kecil, berwarna hijau, dan bagian luar dilapisi kelapa parut.",
-        "ikon": "🟢"
     },
     "kue_lapis": {
         "nama": "Kue Lapis",
         "asal": "Kue tradisional Indonesia yang banyak ditemukan di berbagai daerah.",
         "deskripsi": "Kue lapis memiliki ciri khas berupa susunan warna berlapis. Kue ini biasanya dibuat dari tepung beras, tepung tapioka, santan, dan gula, lalu dikukus secara bertahap.",
         "ciri": "Memiliki warna berlapis dan tekstur kenyal.",
-        "ikon": "🍰"
     },
     "kue_lumpur": {
         "nama": "Kue Lumpur",
         "asal": "Jajanan tradisional Indonesia yang populer di berbagai daerah.",
         "deskripsi": "Kue lumpur memiliki tekstur lembut dan padat dengan rasa manis gurih. Bahan yang umum digunakan antara lain kentang, tepung, telur, santan, dan gula.",
         "ciri": "Bentuk bulat pipih, tekstur lembut, dan biasanya berwarna kuning kecokelatan.",
-        "ikon": "🧁"
     },
     "kue_risoles": {
         "nama": "Risoles",
         "asal": "Makanan ringan yang populer di Indonesia dan mendapat pengaruh dari kuliner Eropa.",
         "deskripsi": "Risoles adalah makanan ringan berbentuk gulungan atau lipatan kulit tipis yang berisi sayuran, daging, atau ragout, kemudian dilapisi tepung panir dan digoreng.",
         "ciri": "Berwarna cokelat keemasan, dilapisi tepung panir, dan berbentuk gulungan atau segitiga.",
-        "ikon": "🥟"
     },
     "kue_serabi": {
         "nama": "Kue Serabi",
         "asal": "Jajanan tradisional yang banyak dikenal di daerah Jawa dan Sunda.",
         "deskripsi": "Serabi adalah kue tradisional berbahan dasar tepung beras dan santan. Kue ini biasanya dimasak menggunakan cetakan kecil sehingga menghasilkan aroma khas dan tekstur lembut.",
         "ciri": "Berbentuk bulat, bagian tengah lembut, dan sering memiliki pinggiran agak kering.",
-        "ikon": "🥞"
     }
 }
 
@@ -717,7 +725,6 @@ def get_info_kue(class_key):
         "asal": "Informasi asal belum tersedia.",
         "deskripsi": "Deskripsi belum tersedia.",
         "ciri": "Ciri visual belum tersedia.",
-        "ikon": "🍽️"
     })
 
 # =========================
@@ -772,6 +779,7 @@ if menu == "Beranda":
     with col1:
         st.markdown("""
         <div class="card">
+            <div class="card-icon">1</div>
             <div class="card-title">Import Gambar</div>
             <div class="card-text">
                 Pengguna dapat mengunggah gambar kue dalam format JPG, JPEG, atau PNG.
@@ -783,6 +791,7 @@ if menu == "Beranda":
     with col2:
         st.markdown("""
         <div class="card">
+            <div class="card-icon">2</div>
             <div class="card-title">Prediksi Otomatis</div>
             <div class="card-text">
                 Sistem langsung memprediksi nama kue berdasarkan gambar yang diinput.
@@ -794,6 +803,7 @@ if menu == "Beranda":
     with col3:
         st.markdown("""
         <div class="card">
+            <div class="card-icon">3</div>
             <div class="card-title">Informasi Hasil</div>
             <div class="card-text">
                 Sistem menampilkan nama kue, confidence prediksi, akurasi model,
@@ -852,7 +862,7 @@ elif menu == "Tentang":
     render_hero(
         "Tentang Sistem Klasifikasi Kue Tradisional",
         "Sistem ini dibuat sebagai aplikasi berbasis Streamlit untuk mengenali kue tradisional Indonesia menggunakan citra dan model deep learning MobileNetV2.",
-        "assets/bg_beranda.jpg",
+        "assets/bg_tentang.jpg",
         "Tentang Penelitian"
     )
 
@@ -879,11 +889,12 @@ elif menu == "Nama Makanan":
 
         for idx, key in enumerate(keys[i:i+3]):
             info = get_info_kue(key)
+            initial = info["nama"].replace("Kue ", "").strip()[:1].upper()
 
             with cols[idx]:
                 st.markdown(f"""
                 <div class="card">
-                    <div class="card-icon">{info["ikon"]}</div>
+                    <div class="card-icon">{initial}</div>
                     <div class="card-title">{info["nama"]}</div>
                     <div class="card-origin">{info["asal"]}</div>
                     <div class="card-text">
@@ -900,7 +911,7 @@ elif menu == "Klasifikasi":
     render_hero(
         "Klasifikasi Gambar Kue",
         "Unggah gambar kue tradisional, kemudian sistem akan memprediksi nama kue secara otomatis menggunakan model MobileNetV2.",
-        "assets/bg_beranda.jpg",
+        "assets/bg_klasifikasi.jpg",
         "Prediksi Otomatis"
     )
 
@@ -971,6 +982,19 @@ elif menu == "Klasifikasi":
             if info is None:
                 st.markdown(
                     '<div class="result-name" style="color:#C0392B !important;">Gambar Tidak Dikenali</div>',
+                    unsafe_allow_html=True
+                )
+                st.markdown(
+                    f"""
+                    <div class="error-box">
+                        Sistem tidak dapat mengenali gambar ini sebagai salah satu dari enam jenis kue
+                        tradisional yang dikenali (tingkat keyakinan model hanya {confidence:.2f}%, di
+                        bawah ambang batas {CONFIDENCE_THRESHOLD:.0f}%). Hal ini biasanya terjadi karena
+                        gambar bukan termasuk kue Dadar Gulung, Klepon, Lapis, Lumpur, Risoles, atau
+                        Serabi, atau karena kualitas gambar (pencahayaan, sudut pengambilan, maupun
+                        kejelasan objek) kurang mendukung proses pengenalan.
+                    </div>
+                    """,
                     unsafe_allow_html=True
                 )
 
@@ -1061,7 +1085,7 @@ elif menu == "Kontak":
     render_hero(
         "Kontak dan Informasi Sistem",
         "Halaman ini berisi informasi singkat mengenai pengembang, teknologi yang digunakan, dan tujuan pembuatan aplikasi.",
-        "assets/bg_beranda.jpg",
+        "assets/bg_kontak.jpg",
         "Informasi Pengembang"
     )
 

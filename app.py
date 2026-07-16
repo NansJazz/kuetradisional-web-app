@@ -583,6 +583,18 @@ div[data-testid="stVerticalBlock"]{
 div[data-testid="stElementContainer"]{
     background: transparent !important;
 }
+            
+section.main > div {
+    background: transparent !important;
+}
+
+div.block-container {
+    background: transparent !important;
+}
+
+main {
+    background: transparent !important;
+}
 
 .stMarkdown, .stText, p, span, label {
     color: var(--ink-soft);

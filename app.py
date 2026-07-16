@@ -1102,7 +1102,7 @@ elif menu == "Kontak":
             <div class="about-title">Identitas Sistem</div>
             <div class="about-text">
                 <b>Nama Sistem:</b> Klasifikasi Citra Kue Tradisional Indonesia<br>
-                <b>Metode:</b> Deep Learning<br>
+                <b>Metode:</b> Machine Learning dan Deep Learning<br>
                 <b>Arsitektur:</b> MobileNetV2<br>
                 <b>Platform:</b> Streamlit<br>
                 <b>Format Model:</b> model_kue.keras

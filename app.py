@@ -720,7 +720,7 @@ kue_info = {
         "ikon": "🧁"
     },
     "kue_risoles": {
-        "nama": "Risoles",
+        "nama": "Kue Risoles",
         "asal": "Makanan ringan yang populer di Indonesia dan mendapat pengaruh dari kuliner Eropa.",
         "deskripsi": "Risoles adalah makanan ringan berbentuk gulungan atau lipatan kulit tipis yang berisi sayuran, daging, atau ragout, kemudian dilapisi tepung panir dan digoreng.",
         "ciri": "Berwarna cokelat keemasan, dilapisi tepung panir, dan berbentuk gulungan atau segitiga.",

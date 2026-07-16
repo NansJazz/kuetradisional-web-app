@@ -17,6 +17,7 @@ st.set_page_config(
 )
 
 MODEL_TEST_ACCURACY = 90.0
+CONFIDENCE_THRESHOLD = 70.0
 
 # Jika model kamu sudah memakai preprocess_input saat training di dalam model,
 # biarkan False. Jika model kamu belum memakai preprocess_input di dalam model,
@@ -659,7 +660,7 @@ try:
     with open("class_names.json", "r") as f:
         class_names = json.load(f)
 except Exception as e:
-    st.error("File class_names.json gagal dibaca. Pastikan file tersebut berada satu folder dengan app.py.")
+    st.error("File class_names.json gagal dibaca. Pastikan file tSersebut berada satu folder dengan app.py.")
     st.stop()
 
 # =========================
@@ -771,7 +772,6 @@ if menu == "Beranda":
     with col1:
         st.markdown("""
         <div class="card">
-            <div class="card-icon">📷</div>
             <div class="card-title">Import Gambar</div>
             <div class="card-text">
                 Pengguna dapat mengunggah gambar kue dalam format JPG, JPEG, atau PNG.
@@ -783,7 +783,6 @@ if menu == "Beranda":
     with col2:
         st.markdown("""
         <div class="card">
-            <div class="card-icon">🤖</div>
             <div class="card-title">Prediksi Otomatis</div>
             <div class="card-text">
                 Sistem langsung memprediksi nama kue berdasarkan gambar yang diinput.
@@ -795,7 +794,6 @@ if menu == "Beranda":
     with col3:
         st.markdown("""
         <div class="card">
-            <div class="card-icon">📊</div>
             <div class="card-title">Informasi Hasil</div>
             <div class="card-text">
                 Sistem menampilkan nama kue, confidence prediksi, akurasi model,
@@ -915,7 +913,7 @@ elif menu == "Klasifikasi":
 
     with left_col:
         st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
-        st.markdown('<div class="upload-title">📤 Import Gambar Kue</div>', unsafe_allow_html=True)
+        st.markdown('<div class="upload-title">Import Gambar Kue</div>', unsafe_allow_html=True)
         st.markdown(
             '<div class="upload-desc">Pilih gambar kue tradisional dalam format JPG, JPEG, atau PNG. Setelah gambar diunggah, sistem akan langsung melakukan prediksi otomatis.</div>',
             unsafe_allow_html=True
@@ -932,7 +930,7 @@ elif menu == "Klasifikasi":
             img = Image.open(uploaded_file).convert("RGB")
             st.image(img, caption="Gambar yang diunggah", use_container_width=True)
         else:
-            st.info("Silakan unggah gambar kue terlebih dahulu untuk melakukan klasifikasi.")
+            st.info("Silahkan unggah gambar kue terlebih dahulu untuk melakukan klasifikasi.")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -953,60 +951,82 @@ elif menu == "Klasifikasi":
                 img_array = preprocess_input(img_array)
 
             prediction = model.predict(img_array, verbose=0)
+
             predicted_index = int(np.argmax(prediction))
             confidence = float(np.max(prediction) * 100)
-            predicted_class = class_names[predicted_index]
-            info = get_info_kue(predicted_class)
+
+            # Jika confidence terlalu rendah
+            if confidence < CONFIDENCE_THRESHOLD:
+                predicted_class = None
+                info = None
+            else:
+                predicted_class = class_names[predicted_index]
+                info = get_info_kue(predicted_class)
 
             status_label, status_text, status_class = get_confidence_status(confidence)
 
             st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
-            st.markdown('<div class="result-title">✅ Hasil Prediksi Otomatis</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="result-name">{info["nama"]}</div>', unsafe_allow_html=True)
+            st.markdown('<div class="result-title">Hasil Prediksi Otomatis</div>', unsafe_allow_html=True)
 
-            metric1, metric2 = st.columns(2)
+            if info is None:
+                st.markdown(
+                    '<div class="result-name" style="color:#C0392B !important;">Gambar Tidak Dikenali</div>',
+                    unsafe_allow_html=True
+                )
 
-            with metric1:
-                st.markdown(f"""
-                <div class="metric-card">
-                    <div class="metric-label">Confidence Prediksi</div>
-                    <div class="metric-value">{confidence:.2f}%</div>
-                </div>
-                """, unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    f'<div class="result-name">{info["nama"]}</div>',
+                    unsafe_allow_html=True
+                )
 
-            with metric2:
-                st.markdown(f"""
-                <div class="metric-card">
-                    <div class="metric-label">Akurasi Model</div>
-                    <div class="metric-value">{MODEL_TEST_ACCURACY:.2f}%</div>
-                </div>
-                """, unsafe_allow_html=True)
+                metric1, metric2 = st.columns(2)
 
-            st.progress(float(confidence / 100))
+                with metric1:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div class="metric-label">Confidence Prediksi</div>
+                        <div class="metric-value">{confidence:.2f}%</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            st.markdown(
-                f'<div class="{status_class}">Tingkat keyakinan model: {status_label}. {status_text}</div>',
-                unsafe_allow_html=True
-            )
+                with metric2:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div class="metric-label">Akurasi Model</div>
+                        <div class="metric-value">{MODEL_TEST_ACCURACY:.2f}%</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.progress(float(confidence / 100))
+
+                st.markdown(
+                    f'<div class="{status_class}">Tingkat keyakinan model: {status_label}. {status_text}</div>',
+                    unsafe_allow_html=True
+                )
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
-            st.markdown('<div class="result-title">📌 Informasi Kue</div>', unsafe_allow_html=True)
-            st.markdown(f"""
-            <div class="info-text">
-                <b>Nama Kue:</b> {info['nama']}<br><br>
-                <b>Asal/Keterangan:</b> {info['asal']}<br><br>
-                <b>Ciri Visual:</b> {info['ciri']}<br><br>
-                <b>Deskripsi:</b> {info['deskripsi']}
-            </div>
-            """, unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            if info is not None:
+
+                st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
+                st.markdown('<div class="result-title">Informasi Kue</div>', unsafe_allow_html=True)
+
+                st.markdown(f"""
+                <div class="info-text">
+                    <b>Nama Kue:</b> {info['nama']}<br><br>
+                    <b>Asal/Keterangan:</b> {info['asal']}<br><br>
+                    <b>Ciri Visual:</b> {info['ciri']}<br><br>
+                    <b>Deskripsi:</b> {info['deskripsi']}
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.markdown('</div>', unsafe_allow_html=True)
 
         else:
             st.markdown("""
             <div class="classification-panel">
-                <div class="result-title">🔍 Hasil Prediksi Akan Muncul di Sini</div>
+                <div class="result-title">Hasil Prediksi Akan Muncul di Sini</div>
                 <div class="info-text">
                     Setelah gambar kue diunggah, sistem akan otomatis menampilkan nama kue,
                     tingkat keyakinan prediksi, informasi kue, top 3 prediksi, dan grafik probabilitas.
@@ -1014,9 +1034,9 @@ elif menu == "Klasifikasi":
             </div>
             """, unsafe_allow_html=True)
 
-    if uploaded_file is not None:
+    if uploaded_file is not None and info is not None:
         st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
-        st.markdown('<div class="result-title">📊 Top 3 Prediksi</div>', unsafe_allow_html=True)
+        st.markdown('<div class="result-title">Top 3 Prediksi</div>', unsafe_allow_html=True)
 
         top_indices = np.argsort(prediction[0])[-3:][::-1]
 

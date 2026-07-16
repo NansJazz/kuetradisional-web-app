@@ -567,9 +567,21 @@ div[data-testid="stAlert"] p {
     font-weight: 600 !important;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: var(--bg-card) !important;
-    border-radius: 24px !important;
+/* Hilangkan background putih bawaan Streamlit */
+
+div[data-testid="stVerticalBlockBorderWrapper"]{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+div[data-testid="stVerticalBlock"]{
+    background: transparent !important;
+}
+
+div[data-testid="stElementContainer"]{
+    background: transparent !important;
 }
 
 .stMarkdown, .stText, p, span, label {

@@ -717,7 +717,7 @@ def get_info_kue(class_key):
         "asal": "Informasi asal belum tersedia.",
         "deskripsi": "Deskripsi belum tersedia.",
         "ciri": "Ciri visual belum tersedia.",
-        "ikon": ""
+        "ikon": "🍽️"
     })
 
 # =========================
@@ -772,7 +772,6 @@ if menu == "Beranda":
     with col1:
         st.markdown("""
         <div class="card">
-            <div class="card-icon">📷</div>
             <div class="card-title">Import Gambar</div>
             <div class="card-text">
                 Pengguna dapat mengunggah gambar kue dalam format JPG, JPEG, atau PNG.
@@ -784,7 +783,6 @@ if menu == "Beranda":
     with col2:
         st.markdown("""
         <div class="card">
-            <div class="card-icon">🤖</div>
             <div class="card-title">Prediksi Otomatis</div>
             <div class="card-text">
                 Sistem langsung memprediksi nama kue berdasarkan gambar yang diinput.
@@ -796,7 +794,6 @@ if menu == "Beranda":
     with col3:
         st.markdown("""
         <div class="card">
-            <div class="card-icon"></div>
             <div class="card-title">Informasi Hasil</div>
             <div class="card-text">
                 Sistem menampilkan nama kue, confidence prediksi, akurasi model,
@@ -1037,7 +1034,7 @@ elif menu == "Klasifikasi":
         else:
             st.markdown("""
             <div class="classification-panel">
-                <div class="result-title">🔍 Hasil Prediksi Akan Muncul di Sini</div>
+                <div class="result-title">Hasil Prediksi Akan Muncul di Sini</div>
                 <div class="info-text">
                     Setelah gambar kue diunggah, sistem akan otomatis menampilkan nama kue,
                     tingkat keyakinan prediksi, informasi kue, top 3 prediksi, dan grafik probabilitas.
@@ -1047,7 +1044,7 @@ elif menu == "Klasifikasi":
 
     if uploaded_file is not None and info is not None:
         st.markdown('<div class="classification-panel">', unsafe_allow_html=True)
-        st.markdown('<div class="result-title">📊 Top 3 Prediksi</div>', unsafe_allow_html=True)
+        st.markdown('<div class="result-title">Top 3 Prediksi</div>', unsafe_allow_html=True)
 
         top_indices = np.argsort(prediction[0])[-3:][::-1]
 
